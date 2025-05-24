@@ -40,7 +40,7 @@ This repository includes both the **FastAPI backend** and a **Next.js frontend**
 1. **Clone the repository and navigate to the backend folder**:
     ```bash
     git clone https://github.com/Riyasharma1311/Zero-bias
-    cd heart-sync/backend
+    cd Zero-bias/backend
     ```
 
 2. **Create and activate a virtual environment**:
