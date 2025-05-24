@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     KEY_ROTATION_INTERVAL: int = 36000  # 24 hours in seconds
     
     # CORS
-    CORS_ORIGINS: List[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: List[str] = ["*"]
     
     # Storage
     STORAGE_PATH: str = "./storage"
