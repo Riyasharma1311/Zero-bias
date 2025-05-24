@@ -37,25 +37,24 @@ export default function NewPatientPage() {
       const patient = await createPatient(formData as PatientCreate);
       await createReports(
         patient.id,
-        reports.map((report) => ({
-          ...report,
-          cpt_codes: Array.isArray(report.cpt_codes)
-            ? report.cpt_codes
-            : report.cpt_codes.split(","),
-          icd9_codes: Array.isArray(report.icd9_codes)
-            ? report.icd9_codes
-            : report.icd9_codes.split(","),
-          procedure_pairs: Array.isArray(report.procedure_pairs)
-            ? report.procedure_pairs
-            : // @ts-ignore
-              JSON.parse(report.procedure_pairs),
-          lab_events: Array.isArray(report.lab_events)
-            ? report.lab_events
-            : // @ts-ignore
-              JSON.parse(report.lab_events.split(",")),
-        }))
+        reports.map(
+          (report) =>
+            ({
+              ...report,
+              cpt_codes: report.cpt_codes.split(","),
+              icd9_codes: report.icd9_codes.split(","),
+              procedure_pairs: Array.isArray(report.procedure_pairs)
+                ? report.procedure_pairs
+                : // @ts-ignore
+                  JSON.parse(report.procedure_pairs),
+              lab_events: report.lab_events
+                .split(",")
+                .map((event: string) => event.trim()),
+            } as any)
+        )
       );
-      router.push("/patients");
+
+      router.push(`/patients/${patient.id}`);
     } catch (error) {
       console.error("Failed to create patient:", error);
     } finally {
@@ -322,10 +321,10 @@ export default function NewPatientPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="admissionType">Admission Type</Label>
+                <Label htmlFor="admission_type">Admission Type</Label>
                 <Select
-                  value={formData.admissionType}
-                  onValueChange={handleSelectChange("admissionType")}
+                  value={formData.admission_type}
+                  onValueChange={handleSelectChange("admission_type")}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Admission Type" />
@@ -343,8 +342,8 @@ export default function NewPatientPage() {
               <div className="space-y-2">
                 <Label htmlFor="dischargeLocation">Discharge Location</Label>
                 <Select
-                  value={formData.dischargeLocation}
-                  onValueChange={handleSelectChange("dischargeLocation")}
+                  value={formData.discharge_location}
+                  onValueChange={handleSelectChange("discharge_location")}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select Discharge Location" />
@@ -362,10 +361,10 @@ export default function NewPatientPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="drgType">DRG Type</Label>
+                <Label htmlFor="drg_type">DRG Type</Label>
                 <Select
-                  value={formData.drgType}
-                  onValueChange={handleSelectChange("drgType")}
+                  value={formData.drg_type}
+                  onValueChange={handleSelectChange("drg_type")}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select DRG Type" />

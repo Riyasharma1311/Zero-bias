@@ -67,6 +67,13 @@ export interface Patient {
   created_at: string;
   updated_at: string;
   doctors: number[];
+  reports: Report[];
+  admission_type: string;
+  discharge_location: string;
+  ethnicity: string;
+  cpt_codes: string;
+  all_diagnosis: string;
+  drg_type: string;
 }
 
 export interface PatientCreate {
@@ -88,10 +95,12 @@ export interface PatientCreate {
   insurance_provider?: string;
   insurance_id?: string;
   DOB: string;
+  admission_type: string;
+  discharge_location: string;
   ethnicity: string;
-  admissionType: string;
-  dischargeLocation: string;
-  drgType: string;
+  cpt_codes: string;
+  all_diagnosis: string;
+  drg_type: string;
 }
 
 export interface PatientUpdate {
@@ -212,14 +221,15 @@ export interface ApiError {
 }
 
 export interface Report {
+  id?: number;
   drg_code: string;
   drg_description: string;
   drg_severity: string;
   drg_mortality: string;
-  cpt_codes: string | string[];
-  icd9_codes: string | string[];
-  procedure_pairs: string | string[];
-  lab_events: string | string[];
+  cpt_codes: string;
+  icd9_codes: string;
+  procedure_pairs: string;
+  lab_events: string;
 }
 
 export interface FormData {
