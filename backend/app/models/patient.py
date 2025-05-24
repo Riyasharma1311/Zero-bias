@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Table
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Enum, Table, JSON, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -10,6 +10,41 @@ class Gender(str, enum.Enum):
     """Patient gender enumeration."""
     MALE = "male"
     FEMALE = "female"
+    OTHER = "other"
+
+
+class Ethnicity(str, enum.Enum):
+    """Patient ethnicity enumeration."""
+    CAUCASIAN = "caucasian"
+    AFRICAN_AMERICAN = "african_american"
+    HISPANIC = "hispanic"
+    ASIAN = "asian"
+    NATIVE_AMERICAN = "native_american"
+    OTHER = "other"
+
+
+class AdmissionType(str, enum.Enum):
+    """Admission type enumeration."""
+    EMERGENCY = "emergency"
+    URGENT = "urgent"
+    ELECTIVE = "elective"
+    NEWBORN = "newborn"
+    TRAUMA = "trauma"
+
+
+class DischargeLocation(str, enum.Enum):
+    """Discharge location enumeration."""
+    HOME = "home"
+    SNF = "snf"  # Skilled Nursing Facility
+    REHAB = "rehab"  # Rehabilitation Center
+    LTAC = "ltac"  # Long Term Acute Care
+    OTHER = "other"
+
+
+class DRGType(str, enum.Enum):
+    """DRG type enumeration."""
+    MEDICAL = "medical"
+    SURGICAL = "surgical"
     OTHER = "other"
 
 
@@ -44,9 +79,15 @@ class Patient(Base):
     full_name = Column(String, nullable=False)
     date_of_birth = Column(DateTime(timezone=True), nullable=False)
     gender = Column(Enum(Gender), nullable=False)
+    ethnicity = Column(Enum(Ethnicity))
     contact_number = Column(String)
     email = Column(String)
     address = Column(String)
+    
+    # Admission information
+    admission_type = Column(Enum(AdmissionType))
+    discharge_location = Column(Enum(DischargeLocation))
+    drg_type = Column(Enum(DRGType))
     
     # Medical information
     blood_type = Column(Enum(BloodType))
@@ -56,6 +97,24 @@ class Patient(Base):
     chronic_conditions = Column(String)
     current_medications = Column(String)
     family_history = Column(String)
+    
+    # Clinical indicators
+    diabetes = Column(Boolean, default=False)
+    hypertension = Column(Boolean, default=False)
+    chronic_kidney_disease = Column(Boolean, default=False)
+    copd = Column(Boolean, default=False)
+    coronary_artery_disease = Column(Boolean, default=False)
+    atrial_fibrillation = Column(Boolean, default=False)
+    
+    # Medications
+    ace_inhibitors = Column(Boolean, default=False)
+    arbs = Column(Boolean, default=False)
+    beta_blockers = Column(Boolean, default=False)
+    diuretics = Column(Boolean, default=False)
+    mras = Column(Boolean, default=False)
+    sglt2_inhibitors = Column(Boolean, default=False)
+    
+    # Contact information
     emergency_contact_name = Column(String)
     emergency_contact_number = Column(String)
     insurance_provider = Column(String)
@@ -80,6 +139,40 @@ class Patient(Base):
     vital_signs = relationship("VitalSigns", back_populates="patient")
     medical_records = relationship("MedicalRecord", back_populates="patient")
     risk_assessments = relationship("RiskAssessment", back_populates="patient")
+    reports = relationship("PatientReport", back_populates="patient")
+
+
+class PatientReport(Base):
+    """Patient medical reports including DRG, procedures, and lab events."""
+    __tablename__ = "patient_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    patient_id = Column(Integer, ForeignKey("patients.id"), nullable=False)
+    
+    # DRG Information
+    drg_code = Column(String, nullable=False)
+    drg_description = Column(String)
+    drg_severity = Column(Integer)  # 0-4
+    drg_mortality = Column(Integer)  # 0-4
+    
+    # Medical Codes
+    cpt_codes = Column(JSON)  # List of CPT codes
+    icd9_codes = Column(JSON)  # List of ICD9 codes
+    procedure_pairs = Column(JSON)  # List of procedure pairs
+    lab_events = Column(JSON)  # List of lab events with values and status
+    
+    # Metadata
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
+    created_by = Column(Integer, ForeignKey("users.id"))
+    
+    # Relationships
+    patient = relationship("Patient", back_populates="reports")
+    author = relationship("User")
 
 
 class VitalSigns(Base):

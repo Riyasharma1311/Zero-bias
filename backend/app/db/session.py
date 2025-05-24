@@ -10,7 +10,7 @@ settings = get_settings()
 
 # Create async engine with aiosqlite
 # Convert sqlite:/// to sqlite+aiosqlite:///
-db_url = settings.DATABASE_URL.replace('sqlite:///', 'sqlite+aiosqlite:///')
+db_url = settings.DATABASE_URL
 engine = create_async_engine(
     db_url,
     echo=settings.DEBUG,

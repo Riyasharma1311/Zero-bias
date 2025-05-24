@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./health_sync.db"
+    SYNC_DATABASE_URL: str = "sqlite:///./health_sync.db"  # For migrations
     
     # Security
     SECRET_KEY: str = "your-secret-key-here"  # Change in production
