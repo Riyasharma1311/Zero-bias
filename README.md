@@ -117,7 +117,7 @@ This repository includes both the **FastAPI backend** and a **Next.js frontend**
 
 - Uses type hints throughout for better readability and maintainability
 - Recommended to use Linux for backend development
-- Prisma setup: run migrations before use (if applicable)
+- Prisma setup: run migrations before use
 - Expandable for multi-hospital or multi-doctor support
 
 ---
