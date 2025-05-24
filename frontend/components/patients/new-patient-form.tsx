@@ -1,7 +1,6 @@
 "use client"
 
-import type React from "react"
-
+import type { FormEvent, ChangeEvent } from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -11,16 +10,62 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card } from "@/components/ui/card"
+import { PatientReportForm } from "./PatientReportForm"
+
+interface Report {
+  drgCode: string
+  drgDescription: string
+  drgSeverity: string
+  drgMortality: string
+  cptCodes: string
+  icd9Codes: string
+  procedurePairs: string
+  labEvents: string
+}
+
+interface FormData {
+  age: string
+  gender: string
+  ethnicity: string
+  admissionType: string
+  dischargeLocation: string
+  drgType: string
+  weight: string
+  height: string
+  creatinine: string
+  bnp: string
+  ejectionFraction: string
+  sodium: string
+  diabetes: boolean
+  hypertension: boolean
+  chronicKidneyDisease: boolean
+  copd: boolean
+  coronaryArteryDisease: boolean
+  atrialFibrillation: boolean
+  aceInhibitors: boolean
+  arbs: boolean
+  betaBlockers: boolean
+  diuretics: boolean
+  mras: boolean
+  sglt2Inhibitors: boolean
+}
 
 export function NewPatientForm() {
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showReportForm, setShowReportForm] = useState(false)
+  const [reports, setReports] = useState<Report[]>([])
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     // Demographics
     age: "",
     gender: "",
+    ethnicity: "",
+    admissionType: "",
+    dischargeLocation: "",
+    drgType: "",
     weight: "",
     height: "",
 
@@ -47,29 +92,39 @@ export function NewPatientForm() {
     sglt2Inhibitors: false,
   })
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev: FormData) => ({ ...prev, [name]: value }))
   }
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev: FormData) => ({ ...prev, [name]: value }))
   }
 
   const handleCheckboxChange = (name: string, checked: boolean) => {
-    setFormData((prev) => ({ ...prev, [name]: checked }))
+    setFormData((prev: FormData) => ({ ...prev, [name]: checked }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleAddReport = (report: Report) => {
+    setReports((prev: Report[]) => [...prev, report])
+    setShowReportForm(false)
+  }
+
+  const handleDeleteReport = (index: number) => {
+    setReports((prev: Report[]) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
 
     try {
-      // In a real app, you would submit this data to your API
-      // For demo purposes, we'll just simulate a delay
+      const submitData = {
+        ...formData,
+        reports
+      }
+      
       await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Redirect to dashboard after successful submission
       router.push("/dashboard")
     } catch (error) {
       console.error("Error submitting form:", error)
@@ -112,7 +167,7 @@ export function NewPatientForm() {
                 id="age"
                 name="age"
                 type="number"
-                placeholder="Enter age"
+                placeholder="Enter age in years"
                 value={formData.age}
                 onChange={handleInputChange}
                 required
@@ -123,12 +178,75 @@ export function NewPatientForm() {
               <Label htmlFor="gender">Gender</Label>
               <Select value={formData.gender} onValueChange={(value) => handleSelectChange("gender", value)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Male / Female" />
+                  <SelectValue placeholder="Select Gender" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Male">Male</SelectItem>
                   <SelectItem value="Female">Female</SelectItem>
                   <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="ethnicity">Ethnicity</Label>
+              <Select value={formData.ethnicity} onValueChange={(value) => handleSelectChange("ethnicity", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Ethnicity" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="caucasian">Caucasian</SelectItem>
+                  <SelectItem value="african_american">African American</SelectItem>
+                  <SelectItem value="hispanic">Hispanic</SelectItem>
+                  <SelectItem value="asian">Asian</SelectItem>
+                  <SelectItem value="native_american">Native American</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="admissionType">Admission Type</Label>
+              <Select value={formData.admissionType} onValueChange={(value) => handleSelectChange("admissionType", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Admission Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="emergency">Emergency</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="elective">Elective</SelectItem>
+                  <SelectItem value="newborn">Newborn</SelectItem>
+                  <SelectItem value="trauma">Trauma Center</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="dischargeLocation">Discharge Location</Label>
+              <Select value={formData.dischargeLocation} onValueChange={(value) => handleSelectChange("dischargeLocation", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Discharge Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="home">Home</SelectItem>
+                  <SelectItem value="snf">Skilled Nursing Facility</SelectItem>
+                  <SelectItem value="rehab">Rehabilitation Center</SelectItem>
+                  <SelectItem value="ltac">Long Term Acute Care</SelectItem>
+                  <SelectItem value="other">Other Facility</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="drgType">DRG Type</Label>
+              <Select value={formData.drgType} onValueChange={(value) => handleSelectChange("drgType", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select DRG Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="medical">Medical</SelectItem>
+                  <SelectItem value="surgical">Surgical</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -335,6 +453,46 @@ export function NewPatientForm() {
           </div>
         </div>
 
+        <div className="bg-pink-50 rounded-lg p-6 space-y-6">
+          <div className="flex justify-between items-center border-b pb-2">
+            <h2 className="text-xl font-semibold">Reports</h2>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => setShowReportForm(true)}
+              className="text-pink-600 border-pink-200 hover:bg-pink-50"
+            >
+              + Add Report
+            </Button>
+          </div>
+
+          {/* List of added reports would go here */}
+          {reports.length > 0 ? (
+            <div className="space-y-4">
+              {reports.map((report, index) => (
+                <Card key={index} className="p-4">
+                  <div className="flex justify-between">
+                    <div>
+                      <p className="font-medium">DRG Code: {report.drgCode}</p>
+                      <p className="text-sm text-gray-600">{report.drgDescription}</p>
+                    </div>
+                    <Button 
+                      type="button" 
+                      variant="ghost" 
+                      onClick={() => handleDeleteReport(index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center py-4">No reports added yet</p>
+          )}
+        </div>
+
         <div className="flex flex-col sm:flex-row gap-4 justify-end">
           <Button type="button" variant="outline" onClick={() => router.push("/dashboard")}>
             Cancel
@@ -352,6 +510,8 @@ export function NewPatientForm() {
           </Button>
         </div>
       </form>
+
+
     </div>
   )
 }

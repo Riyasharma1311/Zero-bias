@@ -21,7 +21,7 @@ export interface User {
   is_active: boolean;
 }
 
-export type UserRole = 'admin' | 'doctor';
+export type UserRole = "admin" | "doctor";
 
 export interface UserCreate {
   email: string;
@@ -42,8 +42,8 @@ export interface UserUpdate {
 }
 
 // Patient Types
-export type Gender = 'male' | 'female' | 'other';
-export type BloodType = 'A+' | 'A-' | 'B+' | 'B-' | 'O+' | 'O-' | 'AB+' | 'AB-';
+export type Gender = "male" | "female" | "other";
+export type BloodType = "A+" | "A-" | "B+" | "B-" | "O+" | "O-" | "AB+" | "AB-";
 
 export interface Patient {
   id: number;
@@ -88,6 +88,10 @@ export interface PatientCreate {
   insurance_provider?: string;
   insurance_id?: string;
   DOB: string;
+  ethnicity: string;
+  admissionType: string;
+  dischargeLocation: string;
+  drgType: string;
 }
 
 export interface PatientUpdate {
@@ -205,4 +209,42 @@ export interface ApiResponse<T> {
 export interface ApiError {
   message: string;
   errors?: Record<string, string[]>;
-} 
+}
+
+export interface Report {
+  drg_code: string;
+  drg_description: string;
+  drg_severity: string;
+  drg_mortality: string;
+  cpt_codes: string | string[];
+  icd9_codes: string | string[];
+  procedure_pairs: string | string[];
+  lab_events: string | string[];
+}
+
+export interface FormData {
+  age: string;
+  gender: string;
+  ethnicity: string;
+  admissionType: string;
+  dischargeLocation: string;
+  drgType: string;
+  weight: string;
+  height: string;
+  creatinine: string;
+  bnp: string;
+  ejectionFraction: string;
+  sodium: string;
+  diabetes: boolean;
+  hypertension: boolean;
+  chronicKidneyDisease: boolean;
+  copd: boolean;
+  coronaryArteryDisease: boolean;
+  atrialFibrillation: boolean;
+  aceInhibitors: boolean;
+  arbs: boolean;
+  betaBlockers: boolean;
+  diuretics: boolean;
+  mras: boolean;
+  sglt2Inhibitors: boolean;
+}
