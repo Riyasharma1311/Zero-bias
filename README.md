@@ -185,11 +185,14 @@ The frontend will be available at:
 
 ---
 
-## 📄 License
+## 📑 Reports & Documentation
 
-This project is licensed under the MIT License.
+All reports, presentations, and documentation related to this project can be accessed via the following Drive link:
+
+📎 [Google Drive Folder - Reports](https://drive.google.com/file/d/1UPLe8Oo10HTvhCLWUahSimUP1CFWN3Zl/view?usp=drive_link)
 
 ---
+
 
 ## 🤝 Contributing
 
