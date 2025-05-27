@@ -101,7 +101,7 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {patients.slice(0, 5).map((patient) => (
+                  {patients.map((patient) => (
                     <div
                       key={patient.id}
                       className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 rounded-lg"
