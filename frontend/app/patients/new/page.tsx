@@ -39,18 +39,18 @@ export default function NewPatientPage() {
         patient.id,
         reports.map(
           (report) =>
-            ({
-              ...report,
-              cpt_codes: report.cpt_codes.split(","),
-              icd9_codes: report.icd9_codes.split(","),
-              procedure_pairs: Array.isArray(report.procedure_pairs)
-                ? report.procedure_pairs
-                : // @ts-ignore
-                  JSON.parse(report.procedure_pairs),
-              lab_events: report.lab_events
-                .split(",")
-                .map((event: string) => event.trim()),
-            } as any)
+          ({
+            ...report,
+            cpt_codes: report.cpt_codes.split(","),
+            icd9_codes: report.icd9_codes.split(","),
+            procedure_pairs: Array.isArray(report.procedure_pairs)
+              ? report.procedure_pairs
+              : // @ts-ignore
+              JSON.parse(report.procedure_pairs),
+            lab_events: report.lab_events
+              .split(",")
+              .map((event: string) => event.trim()),
+          } as any)
         )
       );
 
@@ -370,9 +370,9 @@ export default function NewPatientPage() {
                     <SelectValue placeholder="Select DRG Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="medical">Medical</SelectItem>
-                    <SelectItem value="surgical">Surgical</SelectItem>
-                    <SelectItem value="other">Other</SelectItem>
+                    <SelectItem value="medical">HCFA</SelectItem>
+                    <SelectItem value="surgical">APR</SelectItem>
+                    {/* <SelectItem value="other">Other</SelectItem> */}
                   </SelectContent>
                 </Select>
               </div>
